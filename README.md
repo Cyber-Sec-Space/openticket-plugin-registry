@@ -1,3 +1,5 @@
+* [English](README.md) | [繁體中文](README-zh-TW.md)
+
 # OpenTicket Hybrid Plugin Registry
 
 Welcome to the **OpenTicket Hybrid Plugin Registry**. This repository serves as the official integration ecosystem for the open-source [OpenTicket](https://github.com/Cyber-Sec-Space/openticket) SecOps platform.

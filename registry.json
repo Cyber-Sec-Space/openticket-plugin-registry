@@ -1,0 +1,40 @@
+[
+  {
+    "id": "slack-notifier",
+    "name": "Slack Notifier",
+    "version": "1.0.0",
+    "description": "Send alerts and notifications directly to Slack channels when security incidents occur.",
+    "author": "OpenTicket Team",
+    "icon": "slack",
+    "configSchema": [
+      {
+        "key": "SLACK_WEBHOOK_URL",
+        "type": "string",
+        "label": "Slack Webhook URL",
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "pagerduty-escalator",
+    "name": "PagerDuty Escalator",
+    "version": "1.1.0",
+    "description": "Automatically escalate critical security incidents to on-call personnel via PagerDuty.",
+    "author": "OpenTicket Team",
+    "icon": "alert-triangle",
+    "configSchema": [
+      {
+        "key": "PAGERDUTY_API_KEY",
+        "type": "string",
+        "label": "PagerDuty API Key",
+        "required": true
+      },
+      {
+        "key": "PAGERDUTY_SERVICE_ID",
+        "type": "string",
+        "label": "PagerDuty Service ID",
+        "required": true
+      }
+    ]
+  }
+]

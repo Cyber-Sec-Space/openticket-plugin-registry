@@ -1,6 +1,6 @@
 # OpenTicket Plugin Registry
 
-Welcome to the **OpenTicket Plugin Registry**. This repository serves as the official, zero-cost, static JSON registry for the open-source [OpenTicket](https://github.com/openticket) SecOps platform.
+Welcome to the **OpenTicket Plugin Registry**. This repository serves as the official, zero-cost, static JSON registry for the open-source [OpenTicket](https://github.com/Cyber-Sec-Space/openticket) SecOps platform.
 
 By hosting our plugin ecosystem here, the main OpenTicket application can dynamically fetch available plugins directly via GitHub Pages or raw Git CDN, avoiding the need for a dedicated backend service.
 

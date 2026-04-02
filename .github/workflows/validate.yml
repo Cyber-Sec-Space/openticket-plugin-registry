@@ -1,12 +1,14 @@
 name: Validate Plugin Registry
 
 on:
+  push:
+    branches:
+      - main
+      - master
   pull_request:
     branches:
       - main
       - master
-    paths:
-      - 'registry.json'
 
 jobs:
   validate-json:

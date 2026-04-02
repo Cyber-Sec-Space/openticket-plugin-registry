@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "OpenTicket Plugin Registry Schema",
+  "title": "OpenTicket Hybrid Plugin Registry Schema",
   "type": "array",
   "items": {
     "type": "object",
@@ -23,6 +23,13 @@
         "type": "string"
       },
       "icon": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string",
+        "enum": ["npm", "registry"]
+      },
+      "packageName": {
         "type": "string"
       },
       "configSchema": {
@@ -61,7 +68,24 @@
       "description",
       "author",
       "icon",
+      "sourceType",
       "configSchema"
+    ],
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "sourceType": {
+              "const": "npm"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "packageName"
+          ]
+        }
+      }
     ],
     "additionalProperties": false
   }

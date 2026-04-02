@@ -6,6 +6,7 @@
     "description": "Send alerts and notifications directly to Slack channels when security incidents occur.",
     "author": "OpenTicket Team",
     "icon": "slack",
+    "sourceType": "registry",
     "configSchema": [
       {
         "key": "SLACK_WEBHOOK_URL",
@@ -16,23 +17,19 @@
     ]
   },
   {
-    "id": "pagerduty-escalator",
-    "name": "PagerDuty Escalator",
-    "version": "1.1.0",
-    "description": "Automatically escalate critical security incidents to on-call personnel via PagerDuty.",
+    "id": "datadog-monitor",
+    "name": "Datadog Monitor",
+    "version": "1.2.0",
+    "description": "Forward security events and incidents to Datadog for centralized monitoring.",
     "author": "OpenTicket Team",
-    "icon": "alert-triangle",
+    "icon": "activity",
+    "sourceType": "npm",
+    "packageName": "@openticket/datadog-monitor",
     "configSchema": [
       {
-        "key": "PAGERDUTY_API_KEY",
+        "key": "DATADOG_API_KEY",
         "type": "string",
-        "label": "PagerDuty API Key",
-        "required": true
-      },
-      {
-        "key": "PAGERDUTY_SERVICE_ID",
-        "type": "string",
-        "label": "PagerDuty Service ID",
+        "label": "Datadog API Key",
         "required": true
       }
     ]

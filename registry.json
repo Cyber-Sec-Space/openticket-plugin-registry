@@ -2,36 +2,61 @@
   {
     "id": "slack-notifier",
     "name": "Slack Notifier",
-    "version": "1.0.0",
     "description": "Send alerts and notifications directly to Slack channels when security incidents occur.",
     "author": "OpenTicket Team",
     "icon": "slack",
-    "sourceType": "registry",
-    "configSchema": [
-      {
-        "key": "SLACK_WEBHOOK_URL",
-        "type": "string",
-        "label": "Slack Webhook URL",
-        "required": true
+    "latestVersion": "1.1.0",
+    "versions": {
+      "1.0.0": {
+        "sourceType": "registry",
+        "configSchema": [
+          {
+            "key": "SLACK_WEBHOOK_URL",
+            "type": "string",
+            "label": "Slack Webhook URL",
+            "required": true
+          }
+        ]
+      },
+      "1.1.0": {
+        "sourceType": "registry",
+        "configSchema": [
+          {
+            "key": "SLACK_WEBHOOK_URL",
+            "type": "string",
+            "label": "Slack Webhook URL",
+            "required": true
+          },
+          {
+            "key": "SLACK_CHANNEL",
+            "type": "string",
+            "label": "Target Channel (Optional)",
+            "required": false
+          }
+        ]
       }
-    ]
+    }
   },
   {
     "id": "datadog-monitor",
     "name": "Datadog Monitor",
-    "version": "1.2.0",
     "description": "Forward security events and incidents to Datadog for centralized monitoring.",
     "author": "OpenTicket Team",
     "icon": "activity",
-    "sourceType": "npm",
-    "packageName": "@openticket/datadog-monitor",
-    "configSchema": [
-      {
-        "key": "DATADOG_API_KEY",
-        "type": "string",
-        "label": "Datadog API Key",
-        "required": true
+    "latestVersion": "1.2.0",
+    "versions": {
+      "1.2.0": {
+        "sourceType": "npm",
+        "packageName": "@openticket/datadog-monitor",
+        "configSchema": [
+          {
+            "key": "DATADOG_API_KEY",
+            "type": "string",
+            "label": "Datadog API Key",
+            "required": true
+          }
+        ]
       }
-    ]
+    }
   }
 ]

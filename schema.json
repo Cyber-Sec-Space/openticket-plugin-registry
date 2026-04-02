@@ -12,10 +12,6 @@
       "name": {
         "type": "string"
       },
-      "version": {
-        "type": "string",
-        "pattern": "^\\d+\\.\\d+\\.\\d+$"
-      },
       "description": {
         "type": "string"
       },
@@ -25,67 +21,59 @@
       "icon": {
         "type": "string"
       },
-      "sourceType": {
+      "latestVersion": {
         "type": "string",
-        "enum": ["npm", "registry"]
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
       },
-      "packageName": {
-        "type": "string"
-      },
-      "configSchema": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "key": {
-              "type": "string"
+      "versions": {
+        "type": "object",
+        "patternProperties": {
+          "^\\d+\\.\\d+\\.\\d+$": {
+            "type": "object",
+            "properties": {
+              "sourceType": {
+                "type": "string",
+                "enum": ["npm", "registry"]
+              },
+              "packageName": {
+                "type": "string"
+              },
+              "configSchema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": { "type": "string" },
+                    "type": { "type": "string", "enum": ["string", "number", "boolean"] },
+                    "label": { "type": "string" },
+                    "required": { "type": "boolean" }
+                  },
+                  "required": ["key", "type", "label", "required"],
+                  "additionalProperties": false
+                }
+              }
             },
-            "type": {
-              "type": "string",
-              "enum": ["string", "number", "boolean"]
-            },
-            "label": {
-              "type": "string"
-            },
-            "required": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "key",
-            "type",
-            "label",
-            "required"
-          ],
-          "additionalProperties": false
-        }
+            "required": ["sourceType", "configSchema"],
+            "allOf": [
+              {
+                "if": { "properties": { "sourceType": { "const": "npm" } } },
+                "then": { "required": ["packageName"] }
+              }
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
       }
     },
     "required": [
       "id",
       "name",
-      "version",
       "description",
       "author",
       "icon",
-      "sourceType",
-      "configSchema"
-    ],
-    "allOf": [
-      {
-        "if": {
-          "properties": {
-            "sourceType": {
-              "const": "npm"
-            }
-          }
-        },
-        "then": {
-          "required": [
-            "packageName"
-          ]
-        }
-      }
+      "latestVersion",
+      "versions"
     ],
     "additionalProperties": false
   }

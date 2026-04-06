@@ -1,59 +1,38 @@
 [
   {
-    "id": "slack-notifier",
-    "name": "Slack Notifier",
-    "description": "Send alerts and notifications directly to Slack channels when security incidents occur.",
+    "id": "github-issues",
+    "name": "GitHub Issues Integration",
+    "description": "Automatically creates a GitHub issue when a new security incident is reported.",
     "author": "OpenTicket Team",
-    "icon": "slack",
-    "latestVersion": "1.1.0",
+    "icon": "github",
+    "latestVersion": "1.0.0",
     "versions": {
       "1.0.0": {
         "sourceType": "registry",
         "configSchema": [
           {
-            "key": "SLACK_WEBHOOK_URL",
+            "key": "GITHUB_TOKEN",
             "type": "string",
-            "label": "Slack Webhook URL",
-            "required": true
-          }
-        ]
-      },
-      "1.1.0": {
-        "sourceType": "registry",
-        "configSchema": [
-          {
-            "key": "SLACK_WEBHOOK_URL",
-            "type": "string",
-            "label": "Slack Webhook URL",
+            "label": "GitHub Personal Access Token",
             "required": true
           },
           {
-            "key": "SLACK_CHANNEL",
+            "key": "GITHUB_OWNER",
             "type": "string",
-            "label": "Target Channel (Optional)",
-            "required": false
-          }
-        ]
-      }
-    }
-  },
-  {
-    "id": "datadog-monitor",
-    "name": "Datadog Monitor",
-    "description": "Forward security events and incidents to Datadog for centralized monitoring.",
-    "author": "OpenTicket Team",
-    "icon": "activity",
-    "latestVersion": "1.2.0",
-    "versions": {
-      "1.2.0": {
-        "sourceType": "npm",
-        "packageName": "@openticket/datadog-monitor",
-        "configSchema": [
-          {
-            "key": "DATADOG_API_KEY",
-            "type": "string",
-            "label": "Datadog API Key",
+            "label": "Repository Owner (User or Org)",
             "required": true
+          },
+          {
+            "key": "GITHUB_REPO",
+            "type": "string",
+            "label": "Repository Name",
+            "required": true
+          },
+          {
+            "key": "ISSUE_LABELS",
+            "type": "string",
+            "label": "Issue Labels (comma separated)",
+            "required": false
           }
         ]
       }

@@ -11,7 +11,7 @@
     },
     "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
     "icon": "github",
-    "latestVersion": "1.1.0",
+    "latestVersion": "1.2.0",
     "versions": {
       "1.0.0": {
         "sourceType": "registry",
@@ -48,6 +48,37 @@
         "sourceType": "registry",
         "integritySha256": "5986eb844c6da3dcdadad23cb8e4cb6eb7409980d42e18e778a91728140f7645",
         "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS", "CREATE_ASSETS"],
+        "configSchema": [
+          {
+            "key": "GITHUB_TOKEN",
+            "type": "string",
+            "label": "GitHub Personal Access Token",
+            "required": true
+          },
+          {
+            "key": "GITHUB_REPOS",
+            "type": "string",
+            "label": "Observed Repositories (Format: owner/repo, comma separated)",
+            "required": true
+          },
+          {
+            "key": "ISSUE_LABELS",
+            "type": "string",
+            "label": "Issue Labels (comma separated)",
+            "required": false
+          },
+          {
+            "key": "WEBHOOK_SECRET",
+            "type": "string",
+            "label": "GitHub Webhook Secret (For Bi-directional Sync)",
+            "required": false
+          }
+        ]
+      },
+      "1.2.0": {
+        "sourceType": "registry",
+        "integritySha256": "e0c808ab5620775affb3d69f69f9e4b311e50c32dcfd6832074c18d957f5cbed",
+        "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS", "CREATE_ASSETS", "VIEW_ASSETS", "UPDATE_INCIDENT_STATUS_RESOLVE", "UPDATE_INCIDENTS_METADATA", "VIEW_VULNERABILITIES"],
         "configSchema": [
           {
             "key": "GITHUB_TOKEN",

@@ -15,9 +15,14 @@
     "versions": {
       "1.0.0": {
         "sourceType": "registry",
-        "supportedOpenTicketVersion": [">=0.5.0"],
+        "supportedPluginApiVersion": [
+          ">=0.5.0"
+        ],
         "integritySha256": "e7d9c9674ef26d21ba953aded166ad4e07a47136cc9e131192be0867517b460c",
-        "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS"],
+        "requestedPermissions": [
+          "VIEW_INCIDENTS_ALL",
+          "ADD_COMMENTS"
+        ],
         "configSchema": [
           {
             "key": "GITHUB_TOKEN",
@@ -47,9 +52,15 @@
       },
       "1.1.0": {
         "sourceType": "registry",
-        "supportedOpenTicketVersion": [">=0.5.0"],
+        "supportedPluginApiVersion": [
+          ">=0.5.0"
+        ],
         "integritySha256": "5986eb844c6da3dcdadad23cb8e4cb6eb7409980d42e18e778a91728140f7645",
-        "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS", "CREATE_ASSETS"],
+        "requestedPermissions": [
+          "VIEW_INCIDENTS_ALL",
+          "ADD_COMMENTS",
+          "CREATE_ASSETS"
+        ],
         "configSchema": [
           {
             "key": "GITHUB_TOKEN",
@@ -79,9 +90,19 @@
       },
       "1.2.0": {
         "sourceType": "registry",
-        "supportedOpenTicketVersion": [">=0.5.0"],
+        "supportedPluginApiVersion": [
+          ">=0.5.0"
+        ],
         "integritySha256": "70c7153bef0cab4f1394cc3d5e53dec89f962c0121cf8a3f9df6948aad37db6a",
-        "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS", "CREATE_ASSETS", "VIEW_ASSETS", "UPDATE_INCIDENT_STATUS_RESOLVE", "UPDATE_INCIDENTS_METADATA", "VIEW_VULNERABILITIES"],
+        "requestedPermissions": [
+          "VIEW_INCIDENTS_ALL",
+          "ADD_COMMENTS",
+          "CREATE_ASSETS",
+          "VIEW_ASSETS",
+          "UPDATE_INCIDENT_STATUS_RESOLVE",
+          "UPDATE_INCIDENTS_METADATA",
+          "VIEW_VULNERABILITIES"
+        ],
         "configSchema": [
           {
             "key": "GITHUB_TOKEN",
@@ -127,15 +148,22 @@
     "versions": {
       "1.0.0": {
         "sourceType": "registry",
-        "supportedOpenTicketVersion": [">=0.5.0"],
+        "supportedPluginApiVersion": [
+          "1.0.0"
+        ],
         "integritySha256": "b35897c09505f9c3bb64e406cad9f860e1af605412d5da2c8ecbeb1835625189",
-        "requestedPermissions": ["CREATE_INCIDENTS"],
+        "requestedPermissions": [
+          "CREATE_INCIDENTS"
+        ],
         "configSchema": [
           {
             "key": "INTEGRATION_METHOD",
             "type": "string",
             "label": "Integration Method",
-            "options": ["WEBHOOK", "IMAP"],
+            "options": [
+              "WEBHOOK",
+              "IMAP"
+            ],
             "required": true
           },
           {

@@ -70,7 +70,21 @@
                     "key": { "type": "string" },
                     "type": { "type": "string", "enum": ["string", "number", "boolean"] },
                     "label": { "type": "string" },
-                    "required": { "type": "boolean" }
+                    "required": { "type": "boolean" },
+                    "options": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "minItems": 1
+                    },
+                    "dependsOn": {
+                      "type": "object",
+                      "properties": {
+                        "key": { "type": "string" },
+                        "value": { "type": "string" }
+                      },
+                      "required": ["key", "value"],
+                      "additionalProperties": false
+                    }
                   },
                   "required": ["key", "type", "label", "required"],
                   "additionalProperties": false

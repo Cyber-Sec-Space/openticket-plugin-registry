@@ -107,5 +107,85 @@
         ]
       }
     }
+  },
+  {
+    "id": "email-to-ticket",
+    "name": "Email to Ticket Bridge",
+    "description": "Receives emails via Webhook or IMAP polling and converts them to OpenTicket Incidents automatically.",
+    "author": "OpenTicket Team",
+    "developer": {
+      "name": "OpenTicket Team",
+      "email": "dev@cyber-sec.space",
+      "website": "https://openticket.cyber-sec.space"
+    },
+    "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
+    "icon": "mail",
+    "latestVersion": "1.0.0",
+    "versions": {
+      "1.0.0": {
+        "sourceType": "registry",
+        "integritySha256": "b35897c09505f9c3bb64e406cad9f860e1af605412d5da2c8ecbeb1835625189",
+        "requestedPermissions": ["CREATE_INCIDENTS"],
+        "configSchema": [
+          {
+            "key": "INTEGRATION_METHOD",
+            "type": "string",
+            "label": "Integration Method",
+            "options": ["WEBHOOK", "IMAP"],
+            "required": true
+          },
+          {
+            "key": "WEBHOOK_SECRET",
+            "type": "string",
+            "label": "Webhook Authorization Secret",
+            "required": false,
+            "dependsOn": {
+              "key": "INTEGRATION_METHOD",
+              "value": "WEBHOOK"
+            }
+          },
+          {
+            "key": "IMAP_HOST",
+            "type": "string",
+            "label": "IMAP Server Address",
+            "required": true,
+            "dependsOn": {
+              "key": "INTEGRATION_METHOD",
+              "value": "IMAP"
+            }
+          },
+          {
+            "key": "IMAP_PORT",
+            "type": "string",
+            "label": "IMAP Server Port (Default: 993)",
+            "required": false,
+            "dependsOn": {
+              "key": "INTEGRATION_METHOD",
+              "value": "IMAP"
+            }
+          },
+          {
+            "key": "IMAP_USER",
+            "type": "string",
+            "label": "IMAP Username / Email",
+            "required": true,
+            "dependsOn": {
+              "key": "INTEGRATION_METHOD",
+              "value": "IMAP"
+            }
+          },
+          {
+            "key": "IMAP_PASSWORD",
+            "type": "string",
+            "label": "IMAP Password / App Password",
+            "required": true,
+            "dependsOn": {
+              "key": "INTEGRATION_METHOD",
+              "value": "IMAP"
+            }
+          }
+        ]
+      }
+    }
   }
 ]

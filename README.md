@@ -13,6 +13,7 @@ The registry is designed with a **Hybrid Architecture**, allowing users to distr
 3. **Supply Chain File Integrity (`integritySha256`)**: If your plugin is hosted within this repository (`sourceType: "registry"`), you are fully required to execute `scripts/hash.js` against your codebase. This generates an unbreakable SHA256 hash required in the JSON schema, preventing Man-in-the-Middle (MITM) tampering. 
 4. **Strict Publisher Disclosure**: For enterprise compliance, explicit `developer` objects and a `repositoryUrl` mapping to the source code are now fundamentally required.
 5. **Structured Module Definitions**: Code must be separated explicitly into `manifest` and `hooks` objects.
+6. **Native TypeScript Support**: A centralized `tsconfig.json` and strict type definitions for `@openticket/core` (via `types/openticket-core.d.ts`) are now bundled to give developers strongly-typed intellisense and safer integrations built right into your IDE.
 
 ## Registry Architecture
 

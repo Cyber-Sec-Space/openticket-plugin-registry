@@ -14,6 +14,7 @@
 3.  **供應鏈檔案雜湊認證 (`integritySha256`)**：若您選擇將原始碼靜態託管於本註冊庫 (`sourceType: "registry"`)，您必須使用隨附的 `scripts/hash.js` 為您的 `index.tsx` 產生並綁定 SHA256 驗證碼，阻絕任何中間人 (MITM) 代碼竄改。
 4.  **嚴格開發者揭露**：提升開源企業級實踐的安全性，現在每一筆外掛在 `registry.json` 中都必須定義 `developer` (開發人員) 物件與 `repositoryUrl` (原始碼追溯位置)。
 5.  **結構化外掛定義**：外掛程式碼現在要求嚴格區分 `manifest` 與 `hooks` 等物件模組來增加擴充性。
+6.  **原生 TypeScript 支援**：本儲存庫現在內建了 `tsconfig.json` 與完整的 `@openticket/core` 型別定義 (`types/openticket-core.d.ts`)，為開發者在編寫外掛時提供安全的靜態型別防護與完美的 IDE 自動補全體驗。
 
 ## 架構說明
 

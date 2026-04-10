@@ -41,9 +41,14 @@ export type TicketIncident = {
   createdAt: Date;
   updatedAt: Date;
   reporterId: string | null;
+  reporter?: TicketUser;
   tags: string[];
+  assignees?: TicketUser[];
   assetId: string | null;
+  asset?: TicketAsset;
   targetSlaDate: Date | null;
+  comments?: TicketComment[];
+  attachments?: TicketAttachment[];
 };
 
 export type TicketAsset = {
@@ -56,6 +61,8 @@ export type TicketAsset = {
   status: AssetStatus;
   createdAt: Date;
   updatedAt: Date;
+  incidents?: TicketIncident[];
+  vulnerabilityAssets?: TicketVulnerabilityAsset[];
 };
 
 export type TicketVulnerability = {
@@ -70,6 +77,9 @@ export type TicketVulnerability = {
   updatedAt: Date;
   targetSlaDate: Date | null;
   vulnerabilityAssets?: TicketVulnerabilityAsset[];
+  attachments?: TicketAttachment[];
+  assignees?: TicketUser[];
+  comments?: TicketComment[];
 };
 
 export type TicketComment = {
@@ -78,8 +88,11 @@ export type TicketComment = {
   createdAt: Date;
   updatedAt: Date;
   incidentId: string | null;
+  incident?: TicketIncident;
   vulnId: string | null;
+  vuln?: TicketVulnerability;
   authorId: string | null;
+  author?: TicketUser;
 };
 
 export type TicketUser = {
@@ -92,6 +105,15 @@ export type TicketUser = {
   isBot: boolean;
   botPluginIdentifier?: string | null;
   isDisabled: boolean;
+  customRoles?: TicketCustomRole[];
+  apiTokens?: TicketApiToken[];
+  assignees?: TicketIncident[];
+  vulnAssignees?: TicketVulnerability[];
+  comments?: TicketComment[];
+  attachments?: TicketAttachment[];
+  logs?: TicketAuditLog[];
+  reportedIncidents?: TicketIncident[];
+  uploadedAttachments?: TicketAttachment[];
 };
 
 export type TicketAttachment = {
@@ -100,8 +122,11 @@ export type TicketAttachment = {
   fileUrl: string;
   createdAt: Date;
   incidentId: string | null;
+  incident?: TicketIncident;
   vulnId: string | null;
+  vuln?: TicketVulnerability;
   uploaderId: string | null;
+  uploader?: TicketUser;
 };
 
 export type TicketVulnerabilityAsset = {
@@ -112,6 +137,37 @@ export type TicketVulnerabilityAsset = {
   notes: string | null;
   createdAt: Date;
   updatedAt: Date;
+  vulnerability?: TicketVulnerability;
+  asset?: TicketAsset;
+};
+
+export type TicketCustomRole = {
+  id: string;
+  name: string;
+  description: string | null;
+  permissions: Permission[];
+  users?: TicketUser[];
+  systemConfig?: TicketSystemSetting[];
+};
+
+export type TicketMetricSnapshot = {
+  id: string;
+  timestamp: Date;
+  scopeType: string;
+  scopeId: string;
+  payload: string;
+  createdAt: Date;
+};
+
+export type TicketApiToken = {
+  id: string;
+  name: string;
+  tokenHash: string;
+  userId: string;
+  user?: TicketUser;
+  createdAt: Date;
+  expiresAt: Date | null;
+  lastUsedAt: Date | null;
 };
 
 export type TicketAuditLog = {
@@ -122,6 +178,7 @@ export type TicketAuditLog = {
   changes: any | null;
   createdAt: Date;
   userId: string | null;
+  user?: TicketUser;
 };
 
 export type TicketNotification = {
@@ -152,6 +209,7 @@ export type TicketSystemSetting = {
   smtpHost: string | null;
   smtpPort: number | null;
   smtpUser: string | null;
+  smtpPass: string | null;
   smtpFrom: string | null;
   smtpTriggerOnCritical: boolean;
   smtpTriggerOnHigh: boolean;
@@ -165,6 +223,7 @@ export type TicketSystemSetting = {
   soarAutoQuarantineEnabled: boolean;
   soarAutoQuarantineThreshold: Severity;
   updatedAt: Date;
+  defaultUserRoles?: TicketCustomRole[];
 };
 
 export type PluginSdkContext = {
@@ -179,7 +238,7 @@ export type PluginSdkContext = {
     getIncident: (id: string) => Promise<TicketIncident | null>;
     updateIncidentStatus: (id: string, status: IncidentStatus, comment?: string) => Promise<TicketIncident>;
     addComment: (incidentId: string, content: string) => Promise<TicketComment>;
-    createAsset: (name: string, type: AssetType, ipAddress?: string, externalId?: string, metadata?: any) => Promise<TicketAsset>;
+    createAsset: (name: string, type: AssetType, ipAddress?: string | null, externalId?: string | null, metadata?: any) => Promise<TicketAsset>;
     reportVulnerability: (title: string, description: string, severity: Severity, targetAssetId: string, options?: { cveId?: string, cvssScore?: number }) => Promise<TicketVulnerability>;
     
     // Phase 3
@@ -202,7 +261,7 @@ export type PluginSdkContext = {
     deleteAsset: (id: string) => Promise<TicketAsset>;
     deleteVulnerability: (id: string) => Promise<TicketVulnerability>;
     updateAssetMetadata: (assetId: string, metadataPatch: any) => Promise<TicketAsset>;
-    logPluginMetric: (metricName: string, value: number, payload?: any) => Promise<void>;
+    logPluginMetric: (metricName: string, value: number, payload?: any) => Promise<TicketMetricSnapshot>;
 
     // Phase 7
     createUser: (email: string, name: string, assignRoleNames?: string[]) => Promise<TicketUser>;

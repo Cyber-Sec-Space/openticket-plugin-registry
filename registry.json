@@ -4,8 +4,13 @@
     "name": "GitHub Issues Integration",
     "description": "Automatically creates a GitHub issue when a new security incident is reported.",
     "author": "OpenTicket Team",
+    "developer": {
+      "name": "OpenTicket Team",
+      "email": "dev@cyber-sec.space",
+      "website": "https://openticket.cyber-sec.space"
+    },
     "icon": "github",
-    "latestVersion": "1.0.0",
+    "latestVersion": "1.1.0",
     "versions": {
       "1.0.0": {
         "sourceType": "registry",
@@ -32,6 +37,41 @@
             "key": "ISSUE_LABELS",
             "type": "string",
             "label": "Issue Labels (comma separated)",
+            "required": false
+          }
+        ]
+      },
+      "1.1.0": {
+        "sourceType": "registry",
+        "configSchema": [
+          {
+            "key": "GITHUB_TOKEN",
+            "type": "string",
+            "label": "GitHub Personal Access Token",
+            "required": true
+          },
+          {
+            "key": "GITHUB_OWNER",
+            "type": "string",
+            "label": "Repository Owner (User or Org)",
+            "required": true
+          },
+          {
+            "key": "GITHUB_REPO",
+            "type": "string",
+            "label": "Repository Name",
+            "required": true
+          },
+          {
+            "key": "ISSUE_LABELS",
+            "type": "string",
+            "label": "Issue Labels (comma separated)",
+            "required": false
+          },
+          {
+            "key": "WEBHOOK_SECRET",
+            "type": "string",
+            "label": "GitHub Webhook Secret (For Bi-directional Sync)",
             "required": false
           }
         ]

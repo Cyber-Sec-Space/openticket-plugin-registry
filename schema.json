@@ -18,6 +18,15 @@
       "author": {
         "type": "string"
       },
+      "developer": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "website": { "type": "string" }
+        },
+        "required": ["name", "email"]
+      },
       "icon": {
         "type": "string"
       },
@@ -71,6 +80,7 @@
       "name",
       "description",
       "author",
+      "developer",
       "icon",
       "latestVersion",
       "versions"

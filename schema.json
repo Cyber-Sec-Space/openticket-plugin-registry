@@ -48,6 +48,10 @@
                 "type": "string",
                 "enum": ["npm", "registry"]
               },
+              "engineVersion": {
+                "type": "string",
+                "description": "Semver range denoting supported OpenTicket host versions (e.g. >=0.5.0)"
+              },
               "packageName": {
                 "type": "string"
               },
@@ -91,7 +95,7 @@
                 }
               }
             },
-            "required": ["sourceType", "configSchema", "requestedPermissions"],
+            "required": ["sourceType", "engineVersion", "configSchema", "requestedPermissions"],
             "allOf": [
               {
                 "if": { "properties": { "sourceType": { "const": "npm" } } },

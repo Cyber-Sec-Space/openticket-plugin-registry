@@ -9,11 +9,14 @@
       "email": "dev@cyber-sec.space",
       "website": "https://openticket.cyber-sec.space"
     },
+    "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
     "icon": "github",
     "latestVersion": "1.1.0",
     "versions": {
       "1.0.0": {
         "sourceType": "registry",
+        "integritySha256": "e7d9c9674ef26d21ba953aded166ad4e07a47136cc9e131192be0867517b460c",
+        "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS"],
         "configSchema": [
           {
             "key": "GITHUB_TOKEN",
@@ -43,6 +46,8 @@
       },
       "1.1.0": {
         "sourceType": "registry",
+        "integritySha256": "5986eb844c6da3dcdadad23cb8e4cb6eb7409980d42e18e778a91728140f7645",
+        "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS", "CREATE_ASSETS"],
         "configSchema": [
           {
             "key": "GITHUB_TOKEN",
@@ -51,15 +56,9 @@
             "required": true
           },
           {
-            "key": "GITHUB_OWNER",
+            "key": "GITHUB_REPOS",
             "type": "string",
-            "label": "Repository Owner (User or Org)",
-            "required": true
-          },
-          {
-            "key": "GITHUB_REPO",
-            "type": "string",
-            "label": "Repository Name",
+            "label": "Observed Repositories (Format: owner/repo, comma separated)",
             "required": true
           },
           {

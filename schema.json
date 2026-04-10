@@ -27,6 +27,10 @@
         },
         "required": ["name", "email"]
       },
+      "repositoryUrl": {
+        "type": "string",
+        "format": "uri"
+      },
       "icon": {
         "type": "string"
       },
@@ -47,6 +51,17 @@
               "packageName": {
                 "type": "string"
               },
+              "integritySha256": {
+                "type": "string",
+                "pattern": "^[a-fA-F0-9]{64}$"
+              },
+              "requestedPermissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 0
+              },
               "configSchema": {
                 "type": "array",
                 "items": {
@@ -62,11 +77,15 @@
                 }
               }
             },
-            "required": ["sourceType", "configSchema"],
+            "required": ["sourceType", "configSchema", "requestedPermissions"],
             "allOf": [
               {
                 "if": { "properties": { "sourceType": { "const": "npm" } } },
                 "then": { "required": ["packageName"] }
+              },
+              {
+                "if": { "properties": { "sourceType": { "const": "registry" } } },
+                "then": { "required": ["integritySha256"] }
               }
             ],
             "additionalProperties": false

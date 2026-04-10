@@ -6,21 +6,51 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
     id: 'github-issues',
     name: 'GitHub Issues Integration',
     version: '1.1.0',
-    description: 'Bi-directionally syncs OpenTicket security incidents with GitHub issues.',
+    description: 'Bi-directionally syncs OpenTicket security incidents with GitHub issues. Supports multiple repositories mapped as distinct Assets.',
   },
   hooks: {
+    // ---- Initialization: Create Assets for all configured Repos ----
+    onPluginActivated: async (config: Record<string, string>, api: any) => {
+      const reposInput = config['GITHUB_REPOS'];
+      if (!reposInput) return;
+
+      // Extract comma-separated repositories, e.g. "Cyber-Sec-Space/openticket, Cyber-Sec-Space/another-project"
+      const repos = reposInput.split(',').map(r => r.trim()).filter(r => r.length > 0 && r.includes('/'));
+
+      for (const repo of repos) {
+        try {
+          await api.assets.upsert({
+            name: `${repo}`,
+            type: 'REPOSITORY',
+            description: `Auto-synced repository asset for GitHub Project: ${repo}`,
+            metadata: {
+              plugin: 'github-issues',
+              repo_identifier: repo
+            }
+          });
+          console.log(`[GitHub Issues] Created/Validated repository asset for ${repo}`);
+        } catch (error) {
+          console.error(`[GitHub Issues] Failed to create asset for ${repo}`, error);
+        }
+      }
+    },
+
     // ---- Push: OpenTicket to GitHub ----
     onIncidentCreated: async (incident: Incident, config: Record<string, string>) => {
       const token = config['GITHUB_TOKEN'];
-      const owner = config['GITHUB_OWNER'];
-      const repo = config['GITHUB_REPO'];
       const labelsInput = config['ISSUE_LABELS'] || 'security,incident';
 
-      if (!token || !owner || !repo) {
-        console.error('[GitHub Issues] Missing required configuration (Token, Owner, or Repo).');
+      if (!token) return;
+
+      // Determine correct repo from incident's attached asset
+      // Fallback: If no asset is selected, we cannot determine which repo to create the issue on.
+      const targetRepo = incident.asset?.metadata?.repo_identifier;
+      if (!targetRepo || !targetRepo.includes('/')) {
+        console.log(`[GitHub Issues] Skipping issue creation: Incident ${incident.id} is not mapped to a GitHub Repository Asset.`);
         return;
       }
 
+      const [owner, repo] = targetRepo.split('/');
       const labels = labelsInput.split(',').map(l => l.trim()).filter(l => l.length > 0);
 
       try {
@@ -38,30 +68,29 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
           }),
         });
 
-        if (!response.ok) {
-          const err = await response.text();
-          console.error(`[GitHub Issues] Failed to create GitHub issue: ${response.status} - ${err}`);
-        } else {
+        if (response.ok) {
           const data = await response.json();
-          // Returning data like issue_number allows OpenTicket 0.5.0 engine to store it in incident metadata
-          console.log(`[GitHub Issues] Successfully created issue #${data.number} for incident ${incident.id}`);
-          return { github_issue_number: data.number };
+          console.log(`[GitHub Issues] Successfully created issue #${data.number} in ${targetRepo} for incident ${incident.id}`);
+          // Saving target_repo alongside issue_number to ensure correct repo is used for resolutions
+          return { github_issue_number: data.number, target_repo: targetRepo };
+        } else {
+          console.error(`[GitHub Issues] Failed to create issue in ${targetRepo}: ${response.status}`);
         }
       } catch (error) {
-        console.error('[GitHub Issues] Fatal network error while dispatching request', error);
+        console.error('[GitHub Issues] Fatal network error', error);
       }
     },
 
     onIncidentResolved: async (incident: Incident, config: Record<string, string>, metadata: Record<string, any>) => {
       const token = config['GITHUB_TOKEN'];
-      const owner = config['GITHUB_OWNER'];
-      const repo = config['GITHUB_REPO'];
       const issueNumber = metadata['github_issue_number'];
+      const targetRepo = metadata['target_repo'];
 
-      if (!token || !owner || !repo || !issueNumber) return;
+      if (!token || !issueNumber || !targetRepo) return;
+
+      const [owner, repo] = targetRepo.split('/');
 
       try {
-        // Close the issue on GitHub when resolved in OpenTicket
         await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${issueNumber}`, {
           method: 'PATCH',
           headers: {
@@ -71,7 +100,7 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
           },
           body: JSON.stringify({ state: 'closed' }),
         });
-        console.log(`[GitHub Issues] Successfully closed issue #${issueNumber}`);
+        console.log(`[GitHub Issues] Closed issue #${issueNumber} in ${targetRepo}`);
       } catch (error) {
         console.error('[GitHub Issues] Error closing issue', error);
       }
@@ -82,7 +111,6 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
       const secret = config['WEBHOOK_SECRET'];
       if (!secret) return new Response('Webhook Secret Not Configured', { status: 400 });
 
-      // Verify GitHub Signature
       const signature = req.headers.get('x-hub-signature-256') || '';
       const bodyText = await req.text();
       
@@ -94,15 +122,20 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
 
       const payload = JSON.parse(bodyText);
 
-      // Listen for issue close events
+      // Verify actions only for issues that are closed
       if (req.headers.get('x-github-event') === 'issues' && payload.action === 'closed') {
         const issueNumber = payload.issue.number;
-        // Call the OpenTicket API injected into the hook to resolve the incident associated with this ID
-        await api.incidents.resolveByMetadata('github_issue_number', issueNumber);
-        console.log(`[GitHub Issues] Synced close status for issue #${issueNumber} to OpenTicket.`);
+        const targetRepo = payload.repository.full_name;
+
+        // Resolve all incidents that match BOTH the metadata signature so cross-repo issues don't collide
+        await api.incidents.resolveByMetadata({
+          github_issue_number: issueNumber,
+          target_repo: targetRepo
+        });
+        console.log(`[GitHub Issues] Synced close status for ${targetRepo}#${issueNumber} to OpenTicket.`);
       }
 
-      return new Response('Webhook processed successfully', { status: 200 });
+      return new Response('Webhook processed', { status: 200 });
     }
   }
 };

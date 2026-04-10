@@ -8,10 +8,11 @@ The registry is designed with a **Hybrid Architecture**, allowing users to distr
 
 ## 🚀 OpenTicket 0.5.0 Architecture
 
-With the release of OpenTicket 0.5.0, the plugin engine now supports **Bi-directional Synchronization**, allowing plugins to securely listen to and react to webhook events from external systems.
-The new architecture requires plugins to use the dual `manifest` and `hooks` structured interface (Check our `github-issues` v1.1.0 plugin for a real-world example).
-
-Additionally, for enterprise compliance, **developer metadata** (`name` and `email`) is now strictly required for all registry entries.
+1. **Bi-directional Synchronization**: The plugin engine now supports lifecycle hooks allowing plugins to securely listen to and react to webhook events from exterior systems.
+2. **Zero-Trust OAuth Authorization (`requestedPermissions`)**: To prevent supply-chain vulnerabilities, plugins must define a `requestedPermissions` array within `registry.json` (e.g., `["VIEW_INCIDENTS_ALL", "ADD_COMMENTS"]`). The central OpenTicket platform enforces this by spawning a secure Dual-Layer Consent Modal, requiring Admins to manually verify the permissions prior to downloading your code.
+3. **Supply Chain File Integrity (`integritySha256`)**: If your plugin is hosted within this repository (`sourceType: "registry"`), you are fully required to execute `scripts/hash.js` against your codebase. This generates an unbreakable SHA256 hash required in the JSON schema, preventing Man-in-the-Middle (MITM) tampering. 
+4. **Strict Publisher Disclosure**: For enterprise compliance, explicit `developer` objects and a `repositoryUrl` mapping to the source code are now fundamentally required.
+5. **Structured Module Definitions**: Code must be separated explicitly into `manifest` and `hooks` objects.
 
 ## Registry Architecture
 
@@ -38,11 +39,17 @@ The OpenTicket community relies on collective plugins!
 1.  **Fork this Repository**: Start by forking the registry.
 2.  **Define Metadata**: Append your plugin into `registry.json`. You **must** provide the `developer` block detailing your name and email.
 3.  **Include the Source**: If using `"registry"`, place your `.tsx` code in `/plugins/<your-plugin-id>/<version>/index.tsx`.
-4.  **Local Testing**:
-    ```bash
-    npm install -g ajv-cli
-    ajv validate -s schema.json -d registry.json
-    ```
+4.  **Local Integrity Hash & Validation**:
+    * Generate Supply Chain Signature (If `sourceType: "registry"`):
+      ```bash
+      node scripts/hash.js plugins/<your-plugin-id>/<version>/index.tsx
+      # Insert the output hash straight into registry.json as "integritySha256"
+      ```
+    * Validate Registry Schema:
+      ```bash
+      npm install -g ajv-cli
+      ajv validate -s schema.json -d registry.json
+      ```
 5.  **Submit a PR**: Open a Pull Request completing the check sheet.
 
 Thanks for contributing!

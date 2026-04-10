@@ -8,6 +8,8 @@ Thank you for contributing to the OpenTicket Plugin Registry! Please ensure your
 - [ ] I have declared a `sourceType` (either `"npm"` or `"registry"`).
 - [ ] I have verified the JSON syntax is valid and passes `schema.json` via local or CI tests.
 - [ ] I have included the correct `configSchema` detailing all required environment variables.
+- [ ] I have populated the `requestedPermissions` constraint array (mandatory for v0.5.0+ OpenTicket Zero-Trust UI Modal).
+- [ ] I have provided a `repositoryUrl` (if applicable) for transparency.
 
 ### 📦 NPM Distribution (`sourceType: "npm"`)
 *If applicable:*
@@ -18,6 +20,7 @@ Thank you for contributing to the OpenTicket Plugin Registry! Please ensure your
 *If applicable:*
 - [ ] I have created the folder structure strictly mapping to `/plugins/{id}/{version}/index.tsx`.
 - [ ] My `index.tsx` file executes securely, exporting a valid `OpenTicketPlugin` object interface.
+- [ ] I have compiled and provided my `integritySha256` value correctly using the provided `scripts/hash.js` Node utility natively included in this repo (Crucial for Supply Chain Defense against MITM).
 
 ### 📝 Plugin Summary
 *   **Plugin Name:** 

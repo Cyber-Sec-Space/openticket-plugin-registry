@@ -6,34 +6,39 @@ Welcome to the **OpenTicket Hybrid Plugin Registry**. This repository serves as 
 
 The registry is designed with a **Hybrid Architecture**, allowing users to distribute plugins either via standard NPM packages or by hosting the raw `.tsx` source code directly within this repository.
 
-## Architecture
+## 🚀 OpenTicket 0.5.0 Architecture
 
-*   **`registry.json`**: The core data registry. A static JSON array mapping every validated plugin in our ecosystem.
-*   **`schema.json`**: A stringent JSON schema enforcing validation logic, particularly regarding the `sourceType` property.
-*   **GitHub Actions CI**: Automated JSON structure and schema validation tests run on every Push and Pull Request block misconfigured plugins.
+With the release of OpenTicket 0.5.0, the plugin engine now supports **Bi-directional Synchronization**, allowing plugins to securely listen to and react to webhook events from external systems.
+The new architecture requires plugins to use the dual `manifest` and `hooks` structured interface (Check our `github-issues` v1.1.0 plugin for a real-world example).
+
+Additionally, for enterprise compliance, **developer metadata** (`name` and `email`) is now strictly required for all registry entries.
+
+## Registry Architecture
+
+*   **`registry.json`**: The core data registry mapping every validated plugin, maintaining multi-version endpoints.
+*   **`schema.json`**: A stringent JSON schema enforcing validation logic, specifically for the `developer` object and `sourceType` properties.
+*   **GitHub Actions CI**: Automated schema validation tests are run on every Push and Pull Request.
 
 ## Plugin Source Types
 
 ### 1. NPM (`sourceType: "npm"`)
 Distribute compiled modules using the official node package manager.
-* Setup your plugin object in `registry.json`.
-* Set `"sourceType": "npm"`.
-* The `"packageName"` object parameter is strictly required (e.g. `"@your-org/openticket-plugin"`).
+* Set `"sourceType": "npm"` inside your version block in `registry.json`.
+* The `"packageName"` parameter is strictly required.
 
 ### 2. Registry Hosted (`sourceType: "registry"`)
-Distribute lightweight logic scripts straight from this repository. OpenTicket accesses the `.tsx` execution logic at runtime.
-* Setup your plugin object in `registry.json`.
-* Set `"sourceType": "registry"`. (`packageName` should not be defined).
-* The raw source code MUST be placed precisely at: `/plugins/{id}/{version}/index.tsx` inside this repository.
+Distribute lightweight logic scripts straight from this repository.
+* Set `"sourceType": "registry"`.
+* Code MUST be placed precisely at: `/plugins/{id}/{version}/index.tsx`.
 
 ## How to Submit a Plugin
 
-The OpenTicket community relies on collective plugins! Follow the steps below to integrate your service.
+The OpenTicket community relies on collective plugins! 
 
 1.  **Fork this Repository**: Start by forking the registry.
-2.  **Define the Metadata**: Append your object definition into `registry.json` with the correct `id` and `sourceType`.
-3.  **Include the Source (If applicable)**: If using `"registry"`, create the directory path `/plugins/<your-plugin-id>/<version>/index.tsx` and place your code there.
-4.  **Local Testing (Optional but Recommended)**:
+2.  **Define Metadata**: Append your plugin into `registry.json`. You **must** provide the `developer` block detailing your name and email.
+3.  **Include the Source**: If using `"registry"`, place your `.tsx` code in `/plugins/<your-plugin-id>/<version>/index.tsx`.
+4.  **Local Testing**:
     ```bash
     npm install -g ajv-cli
     ajv validate -s schema.json -d registry.json

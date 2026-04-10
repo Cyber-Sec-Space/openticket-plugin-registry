@@ -1,4 +1,4 @@
-import { OpenTicketPlugin } from '@openticket/core';
+import { OpenTicketPlugin, PluginSdkContext, TicketIncident, TicketVulnerability, TicketComment } from '@openticket/core';
 import crypto from 'crypto';
 
 const GitHubIssuesPlugin: OpenTicketPlugin = {
@@ -10,7 +10,7 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
   },
   hooks: {
     // ---- Initialization: Create Assets for all configured Repos ----
-    onInstall: async (config: any, context: any) => {
+    onInstall: async (config: Record<string, any>, context: PluginSdkContext) => {
       const reposInput = config['GITHUB_REPOS'];
       if (!reposInput) return;
 
@@ -43,7 +43,7 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
     },
 
     // ---- Push: OpenTicket Incidents to GitHub ----
-    onIncidentCreated: async (incident: any, config: any, context: any) => {
+    onIncidentCreated: async (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => {
       const token = config['GITHUB_TOKEN'];
       const labelsInput = config['ISSUE_LABELS'] || 'security,incident';
 
@@ -95,7 +95,7 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
     },
 
     // ---- Push: Metadata Sync ----
-    onIncidentUpdated: async (incident: any, config: any, context: any) => {
+    onIncidentUpdated: async (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => {
       const token = config['GITHUB_TOKEN'];
       if (!token || !incident.tags) return;
 
@@ -129,13 +129,13 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
       }
     },
 
-    onIncidentResolved: async (incident: any, config: any, context: any) => {
+    onIncidentResolved: async (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => {
       // Re-trigger the universal updater since onIncidentUpdated handles states efficiently.
       await GitHubIssuesPlugin.hooks?.onIncidentUpdated?.(incident, config, context);
     },
 
     // ---- Push: Comments ----
-    onCommentAdded: async (comment: any, config: any, context: any) => {
+    onCommentAdded: async (comment: TicketComment, config: Record<string, any>, context: PluginSdkContext) => {
       const token = config['GITHUB_TOKEN'];
       if (!token || !comment.incidentId || comment.content.includes('[GitHub:')) return;
 
@@ -164,7 +164,7 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
     },
 
     // ---- Push: Vulnerability Disclosures ----
-    onVulnerabilityCreated: async (vuln: any, config: any, context: any) => {
+    onVulnerabilityCreated: async (vuln: TicketVulnerability, config: Record<string, any>, context: PluginSdkContext) => {
       const token = config['GITHUB_TOKEN'];
       const labelsInput = config['ISSUE_LABELS'] || 'security,incident';
       if (!token) return;
@@ -204,7 +204,7 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
     },
 
     // ---- Pull: GitHub to OpenTicket ----
-    onWebhookReceived: async (req: Request, config: any, context: any) => {
+    onWebhookReceived: async (req: Request, config: Record<string, any>, context: PluginSdkContext) => {
       const secret = config['WEBHOOK_SECRET'];
       if (!secret) return new Response('Webhook Secret Not Configured', { status: 400 });
 
@@ -213,7 +213,9 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
       
       const hmac = crypto.createHmac('sha256', secret);
       const digest = `sha256=${hmac.update(bodyText).digest('hex')}`;
-      if (signature !== digest) {
+      const signatureBuffer = Buffer.from(signature, 'utf8');
+      const digestBuffer = Buffer.from(digest, 'utf8');
+      if (signatureBuffer.length !== digestBuffer.length || !crypto.timingSafeEqual(signatureBuffer, digestBuffer)) {
         return new Response('Invalid Signature', { status: 401 });
       }
 
@@ -221,36 +223,22 @@ const GitHubIssuesPlugin: OpenTicketPlugin = {
       const event = req.headers.get('x-github-event');
 
       if (event === 'issues') {
-        const issueNumber = payload.issue.number;
-        const targetRepo = payload.repository.full_name;
+        const match = payload.issue.body?.match(/\*Incident ID:\* `([^`]+)`/);
+        const incidentId = match ? match[1] : null;
 
-        // In 0.5.0 we use generic global tag searches to find connected incidents natively
-        // since the SDK guarantees we view incidents.
-        const allIncidents = await context.api.searchOpenIncidents(); // Fetches up to 100 open
-        
-        // Wait, closed incidents won't be returned by searchOpenIncidents! So reopened won't work on CLOSED incidents.
-        // Actually this is slightly restrictive but standard. If we want Reopen, we need a better lookup.
-        // But let's check for resolution matches on Open Incidents.
-        const incidents = (allIncidents || []).filter((inc: any) => inc.tags && inc.tags.includes(`github:${targetRepo}#${issueNumber}`));
-
-        if (incidents.length > 0) {
-           const inc = incidents[0];
+        if (incidentId) {
            if (payload.action === 'closed') {
-              await context.api.updateIncidentStatus(inc.id, 'RESOLVED', 'Automatically resolved via GitHub Issue closure webhook.');
+              await context.api.updateIncidentStatus(incidentId, 'RESOLVED', 'Automatically resolved via GitHub Issue closure webhook.');
            }
         }
       } else if (event === 'issue_comment' && payload.action === 'created') {
-        const issueNumber = payload.issue.number;
-        const targetRepo = payload.repository.full_name;
         const commentBody = payload.comment.body;
         const author = payload.comment.user.login;
+        const match = payload.issue.body?.match(/\*Incident ID:\* `([^`]+)`/);
+        const incidentId = match ? match[1] : null;
 
-        if (!commentBody.includes('*OpenTicket Operator Note:*')) {
-          const allIncidents = await context.api.searchOpenIncidents();
-          const incidents = (allIncidents || []).filter((inc: any) => inc.tags && inc.tags.includes(`github:${targetRepo}#${issueNumber}`));
-          if (incidents.length > 0) {
-             await context.api.addComment(incidents[0].id, `[GitHub: @${author}]\n\n${commentBody}`);
-          }
+        if (incidentId && !commentBody.includes('*OpenTicket Operator Note:*')) {
+           await context.api.addComment(incidentId, `[GitHub: @${author}]\n\n${commentBody}`);
         }
       }
 

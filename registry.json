@@ -77,7 +77,7 @@
       },
       "1.2.0": {
         "sourceType": "registry",
-        "integritySha256": "e0c808ab5620775affb3d69f69f9e4b311e50c32dcfd6832074c18d957f5cbed",
+        "integritySha256": "70c7153bef0cab4f1394cc3d5e53dec89f962c0121cf8a3f9df6948aad37db6a",
         "requestedPermissions": ["VIEW_INCIDENTS_ALL", "ADD_COMMENTS", "CREATE_ASSETS", "VIEW_ASSETS", "UPDATE_INCIDENT_STATUS_RESOLVE", "UPDATE_INCIDENTS_METADATA", "VIEW_VULNERABILITIES"],
         "configSchema": [
           {

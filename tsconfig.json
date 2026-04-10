@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@openticket/core": ["./types/openticket-core.d.ts"]
+    }
+  },
+  "include": ["plugins/**/*.ts", "plugins/**/*.tsx", "types/**/*.d.ts"]
+}

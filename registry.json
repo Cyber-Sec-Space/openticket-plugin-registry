@@ -16,7 +16,7 @@
       "1.0.0": {
         "sourceType": "registry",
         "supportedPluginApiVersion": [
-          ">=0.5.0"
+          ">1.0.0"
         ],
         "integritySha256": "e7d9c9674ef26d21ba953aded166ad4e07a47136cc9e131192be0867517b460c",
         "requestedPermissions": [
@@ -53,7 +53,7 @@
       "1.1.0": {
         "sourceType": "registry",
         "supportedPluginApiVersion": [
-          ">=0.5.0"
+          ">1.0.0"
         ],
         "integritySha256": "5986eb844c6da3dcdadad23cb8e4cb6eb7409980d42e18e778a91728140f7645",
         "requestedPermissions": [
@@ -91,7 +91,7 @@
       "1.2.0": {
         "sourceType": "registry",
         "supportedPluginApiVersion": [
-          ">=0.5.0"
+          ">=1.0.0"
         ],
         "integritySha256": "70c7153bef0cab4f1394cc3d5e53dec89f962c0121cf8a3f9df6948aad37db6a",
         "requestedPermissions": [
@@ -149,7 +149,7 @@
       "1.0.0": {
         "sourceType": "registry",
         "supportedPluginApiVersion": [
-          "1.0.0"
+          ">=1.0.0"
         ],
         "integritySha256": "b35897c09505f9c3bb64e406cad9f860e1af605412d5da2c8ecbeb1835625189",
         "requestedPermissions": [

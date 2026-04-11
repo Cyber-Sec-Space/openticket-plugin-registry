@@ -219,5 +219,39 @@
         ]
       }
     }
+  },
+  {
+    "id": "ui-injection-demo",
+    "name": "UI Injection Demo",
+    "description": "Demonstrates native React component injection for dashboard widgets and system settings panels.",
+    "author": "OpenTicket Team",
+    "developer": {
+      "name": "OpenTicket Team",
+      "email": "dev@cyber-sec.space",
+      "website": "https://openticket.cyber-sec.space"
+    },
+    "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
+    "icon": "layout",
+    "latestVersion": "1.0.0",
+    "versions": {
+      "1.0.0": {
+        "sourceType": "registry",
+        "supportedPluginApiVersion": [
+          ">=1.0.0"
+        ],
+        "integritySha256": "9541d33794154a38213cf877eec154845589f26d8c01447f6f5c22a86adf069f",
+        "requestedPermissions": [
+          "VIEW_INCIDENTS_ALL"
+        ],
+        "configSchema": [
+          {
+            "key": "ENABLE_DEMO_MODE",
+            "type": "boolean",
+            "label": "Enable Settings Panel Interactive Demo Mode",
+            "required": false
+          }
+        ]
+      }
+    }
   }
 ]

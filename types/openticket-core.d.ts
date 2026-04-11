@@ -114,13 +114,13 @@ export type TicketUser = {
   notifyOnUnassigned?: boolean;
   customRoles?: TicketCustomRole[];
   apiTokens?: TicketApiToken[];
-  assignees?: TicketIncident[];
-  vulnAssignees?: TicketVulnerability[];
+  assignedIncidents?: TicketIncident[];
+  assignedVulnerabilities?: TicketVulnerability[];
   comments?: TicketComment[];
   attachments?: TicketAttachment[];
-  logs?: TicketAuditLog[];
+  auditLogs?: TicketAuditLog[];
   reportedIncidents?: TicketIncident[];
-  uploadedAttachments?: TicketAttachment[];
+  notifications?: TicketNotification[];
 };
 
 export type TicketAttachment = {
@@ -154,7 +154,7 @@ export type TicketCustomRole = {
   description: string | null;
   permissions: Permission[];
   users?: TicketUser[];
-  systemConfig?: TicketSystemSetting[];
+  systemRule?: TicketSystemSetting[];
 };
 
 export type TicketMetricSnapshot = {
@@ -303,27 +303,54 @@ export type PluginSdkContext = {
 };
 
 export type OpenTicketPluginUI = {
-  dashboardWidgets?: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  settingsPanels?: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  incidentMainWidgets?: ComponentType<{ incident: TicketIncident, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  incidentSidebarWidgets?: ComponentType<{ incident: TicketIncident, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  assetMainWidgets?: ComponentType<{ asset: TicketAsset, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  assetSidebarWidgets?: ComponentType<{ asset: TicketAsset, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  vulnerabilityMainWidgets?: ComponentType<{ vulnerability: TicketVulnerability, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  vulnerabilitySidebarWidgets?: ComponentType<{ vulnerability: TicketVulnerability, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
-  userWidgets?: ComponentType<{ user: TicketUser, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  dashboardWidgets?: (ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  settingsPanels?: (ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  incidentMainWidgets?: (ComponentType<{ incident: TicketIncident, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  incidentSidebarWidgets?: (ComponentType<{ incident: TicketIncident, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  assetMainWidgets?: (ComponentType<{ asset: TicketAsset, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  assetSidebarWidgets?: (ComponentType<{ asset: TicketAsset, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  vulnerabilityMainWidgets?: (ComponentType<{ vulnerability: TicketVulnerability, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  vulnerabilitySidebarWidgets?: (ComponentType<{ vulnerability: TicketVulnerability, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  userMainWidgets?: (ComponentType<{ user: TicketUser, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
+  userSidebarWidgets?: (ComponentType<{ user: TicketUser, api: PluginSdkContext['api'], config: Record<string, any> } | any> | any)[];
   pages?: {
     routeUrl: string;
     title: string;
-    icon?: ComponentType<any>;
-    component: ComponentType<{ api: PluginSdkContext['api'], session: any, routeSlug?: string[] } | any>;
+    icon?: ComponentType<any> | any;
+    component: ComponentType<{ api: PluginSdkContext['api'], session: any, routeSlug?: string[] } | any> | any;
   }[];
   systemConfigTabs?: {
     tabId: string;
     label: string;
-    icon?: ComponentType<any>;
-    component: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any>;
+    icon?: ComponentType<any> | any;
+    component: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any> | any;
   }[];
+};
+
+export const PLUGIN_API_VERSION = "1.1.0";
+
+export type OpenTicketPluginHooks = {
+  onInstall?: (config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onUninstall?: (config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onIncidentCreated?: (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onIncidentUpdated?: (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onIncidentResolved?: (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onIncidentDestroyed?: (incidentId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onAssetCompromise?: (asset: TicketAsset, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onAssetCreated?: (asset: TicketAsset, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onAssetUpdated?: (asset: TicketAsset, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onAssetDestroyed?: (assetId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onVulnerabilityCreated?: (vulnerability: TicketVulnerability, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onVulnerabilityUpdated?: (vulnerability: TicketVulnerability, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onVulnerabilityDestroyed?: (vulnerabilityId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onCommentAdded?: (comment: TicketComment, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onUserCreated?: (user: TicketUser, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onUserUpdated?: (user: TicketUser, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onUserDestroyed?: (userId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onEvidenceAttached?: (attachment: TicketAttachment, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onEvidenceDestroyed?: (attachmentId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onSystemSettingsUpdated?: (settings: TicketSystemSetting, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
+  onWebhookReceived?: (req: Request, config: Record<string, any>, context: PluginSdkContext) => Promise<Response>;
 };
 
 export type OpenTicketPlugin = {
@@ -340,29 +367,7 @@ export type OpenTicketPlugin = {
     signature?: string;
   };
   ui?: OpenTicketPluginUI;
-  hooks?: {
-    onInstall?: (config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onUninstall?: (config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onIncidentCreated?: (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onIncidentUpdated?: (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onIncidentResolved?: (incident: TicketIncident, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onIncidentDestroyed?: (incidentId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onAssetCompromise?: (asset: TicketAsset, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onAssetCreated?: (asset: TicketAsset, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onAssetUpdated?: (asset: TicketAsset, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onAssetDestroyed?: (assetId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onVulnerabilityCreated?: (vulnerability: TicketVulnerability, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onVulnerabilityUpdated?: (vulnerability: TicketVulnerability, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onVulnerabilityDestroyed?: (vulnerabilityId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onCommentAdded?: (comment: TicketComment, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onUserCreated?: (user: TicketUser, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onUserUpdated?: (user: TicketUser, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onUserDestroyed?: (userId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onEvidenceAttached?: (attachment: TicketAttachment, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onEvidenceDestroyed?: (attachmentId: string, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onSystemSettingsUpdated?: (settings: TicketSystemSetting, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
-    onWebhookReceived?: (req: Request, config: Record<string, any>, context: PluginSdkContext) => Promise<Response>;
-  };
+  hooks?: OpenTicketPluginHooks;
 };
 
 export type PluginRegistryVersion = {

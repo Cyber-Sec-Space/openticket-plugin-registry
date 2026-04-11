@@ -159,7 +159,8 @@ const UiInjectionDemo: OpenTicketPlugin = {
     assetSidebarWidgets: [DemoAssetWidget],
     vulnerabilityMainWidgets: [DemoVulnerabilityWidget],
     vulnerabilitySidebarWidgets: [DemoVulnerabilityWidget],
-    userWidgets: [DemoUserWidget],
+    userMainWidgets: [DemoUserWidget],
+    userSidebarWidgets: [DemoUserWidget],
     pages: [
       {
         routeUrl: 'demo-page',

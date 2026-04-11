@@ -239,7 +239,7 @@
         "supportedPluginApiVersion": [
           ">=1.0.0"
         ],
-        "integritySha256": "9541d33794154a38213cf877eec154845589f26d8c01447f6f5c22a86adf069f",
+        "integritySha256": "0756c0d1dfe411f4702b7d9f45eaf49c5ce8203fe4ffd93dbae16621f2aa5188",
         "requestedPermissions": [
           "VIEW_INCIDENTS_ALL"
         ],

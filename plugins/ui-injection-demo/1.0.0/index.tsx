@@ -1,26 +1,21 @@
-"use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import type { OpenTicketPlugin } from '@openticket/core';
 
 // ----------------------------------------------------------------------------
-// 1. Dashboard Widget Component
-// This component will be injected natively into the OpenTicket Admin Dashboard.
+// 1. Dashboard Widget Component (Server Component)
 // ----------------------------------------------------------------------------
-const DemoDashboardWidget = ({ api, config }: any) => {
-  const [incidentCount, setIncidentCount] = useState<number | null>(null);
+const DemoDashboardWidget = async ({ api, config }: any) => {
+  let incidentCount = 42;
 
-  // Fetch some dummy data or use the injected API
-  useEffect(() => {
-    // In a real plugin, you would use the authenticated API client
-    // For demonstration, we simply mock a response pattern.
-    if (api && api.searchOpenIncidents) {
-      api.searchOpenIncidents({ limit: 10 }).then((data: any) => {
-        setIncidentCount(data.length || 0);
-      }).catch(() => setIncidentCount(12)); // fallback for demo
-    } else {
-      setIncidentCount(42);
+  // Since this is a Server Component, we can natively await server-side APIs if needed.
+  if (api && api.searchOpenIncidents) {
+    try {
+      const data = await api.searchOpenIncidents({ limit: 10 });
+      incidentCount = data?.length || 0;
+    } catch {
+      incidentCount = 12; // fallback for demo
     }
-  }, [api]);
+  }
 
   return (
     <div style={{
@@ -61,7 +56,7 @@ const DemoDashboardWidget = ({ api, config }: any) => {
           borderRadius: '9999px',
           fontSize: '0.875rem'
         }}>
-          {incidentCount !== null ? incidentCount : 'Loading...'}
+          {incidentCount}
         </span>
       </div>
     </div>
@@ -69,13 +64,10 @@ const DemoDashboardWidget = ({ api, config }: any) => {
 };
 
 // ----------------------------------------------------------------------------
-// 2. Settings Panel Component
-// This component provides an interface inside the System Settings layout.
+// 2. Settings Panel Component (Server Component)
 // ----------------------------------------------------------------------------
 const DemoSettingsPanel = ({ config }: any) => {
-  const [isDemoModeEnabled, setIsDemoModeEnabled] = useState(
-    config['ENABLE_DEMO_MODE'] === 'true'
-  );
+  const isDemoModeEnabled = config?.ENABLE_DEMO_MODE === 'true';
 
   return (
     <div style={{ padding: '1.5rem', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
@@ -83,12 +75,11 @@ const DemoSettingsPanel = ({ config }: any) => {
         ⚙️ UI Injection Settings Panel
       </h2>
       <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
-        This panel supports stateful interactions. You can bind settings directly to the plugin registry schema context or run independent logic here!
+        This panel supports native React UI injections. 
       </p>
       
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
         <button 
-          onClick={() => setIsDemoModeEnabled(!isDemoModeEnabled)}
           style={{
             padding: '10px 20px',
             backgroundColor: isDemoModeEnabled ? '#10b981' : '#f1f5f9',
@@ -97,15 +88,15 @@ const DemoSettingsPanel = ({ config }: any) => {
             borderRadius: '6px',
             fontSize: '14px',
             fontWeight: 600,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            boxShadow: isDemoModeEnabled ? '0 2px 4px rgba(16, 185, 129, 0.2)' : 'none'
+            cursor: 'not-allowed',
+            opacity: 0.8
           }}
+          disabled
         >
-          {isDemoModeEnabled ? 'Demo Mode Active' : 'Enable Demo Mode'}
+          {isDemoModeEnabled ? 'Demo Config Active' : 'Demo Config Inactive'}
         </button>
         <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
-          This button demonstrates localized React state retention during Hot Reload testing.
+          This button's appearance is driven directly by your Plugin Config JSON instead of useState.
         </span>
       </div>
     </div>

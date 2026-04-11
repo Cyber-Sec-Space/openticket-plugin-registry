@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 
-export type Permission = 
+export type Permission =
   | 'VIEW_INCIDENTS_ALL' | 'VIEW_INCIDENTS_ASSIGNED' | 'VIEW_INCIDENTS_UNASSIGNED' | 'CREATE_INCIDENTS' | 'UPDATE_INCIDENTS_METADATA'
   | 'UPDATE_INCIDENT_STATUS_RESOLVE' | 'UPDATE_INCIDENT_STATUS_CLOSE' | 'ASSIGN_INCIDENTS_SELF' | 'ASSIGN_INCIDENTS_OTHERS'
   | 'LINK_INCIDENT_TO_ASSET' | 'UPLOAD_INCIDENT_ATTACHMENTS' | 'DELETE_INCIDENT_ATTACHMENTS' | 'DELETE_INCIDENTS' | 'EXPORT_INCIDENTS'
@@ -16,7 +16,7 @@ export type Permission =
 
 export type IncidentStatus = 'NEW' | 'IN_PROGRESS' | 'PENDING_INFO' | 'RESOLVED' | 'CLOSED';
 export type IncidentType = 'MALWARE' | 'PHISHING' | 'DATA_BREACH' | 'UNAUTHORIZED_ACCESS' | 'NETWORK_ANOMALY' | 'OTHER';
-export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type Severity = 'INFO' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type AssetType = 'SERVER' | 'ENDPOINT' | 'NETWORK' | 'SOFTWARE' | 'REPOSITORY' | 'CLOUD_RESOURCE' | 'DOMAIN' | 'IAM_ROLE' | 'SAAS_APP' | 'CONTAINER' | 'OTHER';
 export type AssetStatus = 'ACTIVE' | 'INACTIVE' | 'COMPROMISED' | 'MAINTENANCE';
 export type VulnStatus = 'OPEN' | 'MITIGATED' | 'RESOLVED';
@@ -105,6 +105,13 @@ export type TicketUser = {
   isBot: boolean;
   botPluginIdentifier?: string | null;
   isDisabled: boolean;
+  browserNotificationsEnabled?: boolean;
+  notifyOnCritical?: boolean;
+  notifyOnHigh?: boolean;
+  notifyOnAssign?: boolean;
+  notifyOnResolution?: boolean;
+  notifyOnAssetCompromise?: boolean;
+  notifyOnUnassigned?: boolean;
   customRoles?: TicketCustomRole[];
   apiTokens?: TicketApiToken[];
   assignees?: TicketIncident[];
@@ -202,6 +209,7 @@ export type TicketSystemSetting = {
   slaHighHours: number;
   slaMediumHours: number;
   slaLowHours: number;
+  slaInfoHours: number;
   rateLimitEnabled: boolean;
   rateLimitWindowMs: number;
   rateLimitMaxAttempts: number;
@@ -209,7 +217,7 @@ export type TicketSystemSetting = {
   smtpHost: string | null;
   smtpPort: number | null;
   smtpUser: string | null;
-  smtpPass: string | null;
+  smtpPassword: string | null;
   smtpFrom: string | null;
   smtpTriggerOnCritical: boolean;
   smtpTriggerOnHigh: boolean;
@@ -230,17 +238,17 @@ export type PluginSdkContext = {
   plugin: { id: string };
   api: {
     initEntity: (name?: string, requestedPermissions?: Permission[]) => Promise<void>;
-    
+
     // Phase 1
     createIncident: (data: IncidentData) => Promise<TicketIncident>;
-    
+
     // Phase 2
     getIncident: (id: string) => Promise<TicketIncident | null>;
     updateIncidentStatus: (id: string, status: IncidentStatus, comment?: string) => Promise<TicketIncident>;
     addComment: (incidentId: string, content: string) => Promise<TicketComment>;
     createAsset: (name: string, type: AssetType, ipAddress?: string | null, externalId?: string | null, metadata?: any) => Promise<TicketAsset>;
     reportVulnerability: (title: string, description: string, severity: Severity, targetAssetId: string, options?: { cveId?: string, cvssScore?: number }) => Promise<TicketVulnerability>;
-    
+
     // Phase 3
     getUserByEmail: (email: string) => Promise<TicketUser | null>;
     assignIncident: (incidentId: string, targetUserId: string) => Promise<TicketIncident>;
@@ -295,8 +303,27 @@ export type PluginSdkContext = {
 };
 
 export type OpenTicketPluginUI = {
-  dashboardWidgets?: ComponentType<any>[];
-  settingsPanels?: ComponentType<any>[];
+  dashboardWidgets?: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  settingsPanels?: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  incidentMainWidgets?: ComponentType<{ incident: TicketIncident, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  incidentSidebarWidgets?: ComponentType<{ incident: TicketIncident, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  assetMainWidgets?: ComponentType<{ asset: TicketAsset, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  assetSidebarWidgets?: ComponentType<{ asset: TicketAsset, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  vulnerabilityMainWidgets?: ComponentType<{ vulnerability: TicketVulnerability, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  vulnerabilitySidebarWidgets?: ComponentType<{ vulnerability: TicketVulnerability, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  userWidgets?: ComponentType<{ user: TicketUser, api: PluginSdkContext['api'], config: Record<string, any> } | any>[];
+  pages?: {
+    routeUrl: string;
+    title: string;
+    icon?: ComponentType<any>;
+    component: ComponentType<{ api: PluginSdkContext['api'], session: any, routeSlug?: string[] } | any>;
+  }[];
+  systemConfigTabs?: {
+    tabId: string;
+    label: string;
+    icon?: ComponentType<any>;
+    component: ComponentType<{ api: PluginSdkContext['api'], config: Record<string, any> } | any>;
+  }[];
 };
 
 export type OpenTicketPlugin = {
@@ -304,8 +331,13 @@ export type OpenTicketPlugin = {
     id: string;
     name: string;
     version: string;
+    author?: string;
     description: string;
     requestedPermissions?: Permission[];
+    supportedPluginApiVersion?: string[];
+    options?: Record<string, any>;
+    dependsOn?: string[];
+    signature?: string;
   };
   ui?: OpenTicketPluginUI;
   hooks?: {
@@ -331,4 +363,38 @@ export type OpenTicketPlugin = {
     onSystemSettingsUpdated?: (settings: TicketSystemSetting, config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
     onWebhookReceived?: (req: Request, config: Record<string, any>, context: PluginSdkContext) => Promise<Response>;
   };
+};
+
+export type PluginRegistryVersion = {
+  sourceType: 'registry' | 'github' | 'npm';
+  supportedPluginApiVersion?: string[];
+  integritySha256?: string;
+  signature?: string;
+  requestedPermissions?: Permission[];
+  dependsOn?: string[];
+  options?: Record<string, any>;
+  configSchema?: Array<{
+    key: string;
+    type: 'string' | 'number' | 'boolean' | 'enum' | 'secret';
+    label: string;
+    required: boolean;
+    options?: string[];
+    defaultValue?: any;
+  }>;
+};
+
+export type PluginRegistryEntry = {
+  id: string;
+  name: string;
+  description: string;
+  author: string;
+  developer?: {
+    name: string;
+    email: string;
+    website?: string;
+  };
+  repositoryUrl?: string;
+  icon?: string;
+  latestVersion: string;
+  versions: Record<string, PluginRegistryVersion>;
 };

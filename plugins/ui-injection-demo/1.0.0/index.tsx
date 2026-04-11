@@ -1,103 +1,138 @@
 import React from 'react';
 import type { OpenTicketPlugin } from '@openticket/core';
 
+const CardStyle = {
+  padding: '1.25rem',
+  backgroundColor: 'rgba(59, 130, 246, 0.05)',
+  border: '1px solid rgba(59, 130, 246, 0.2)',
+  borderRadius: '12px',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: '8px'
+};
+
+const HeaderStyle = { margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#1e293b' };
+
 // ----------------------------------------------------------------------------
-// 1. Dashboard Widget Component (Server Component)
+// 1. Dashboard Widget Component
 // ----------------------------------------------------------------------------
 const DemoDashboardWidget = async ({ api, config }: any) => {
   let incidentCount = 42;
-
-  // Since this is a Server Component, we can natively await server-side APIs if needed.
   if (api && api.searchOpenIncidents) {
     try {
       const data = await api.searchOpenIncidents({ limit: 10 });
       incidentCount = data?.length || 0;
     } catch {
-      incidentCount = 12; // fallback for demo
+      incidentCount = 12;
     }
   }
 
   return (
-    <div style={{
-      padding: '1.25rem',
-      backgroundColor: 'rgba(59, 130, 246, 0.05)',
-      border: '1px solid rgba(59, 130, 246, 0.2)',
-      borderRadius: '12px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px'
-    }}>
+    <div style={CardStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span style={{ fontSize: '24px' }}>🎨</span>
-        <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: '#1e293b' }}>
-          Custom Injected Widget
-        </h3>
+        <h3 style={HeaderStyle}>Dashboard Widget Injection</h3>
       </div>
       <p style={{ margin: 0, color: '#475569', fontSize: '0.875rem' }}>
-        This React component was delivered directly from the standard OpenTicket Plugin Registry zero-downtime hot-loader.
+        React component injected into the Dashboard. Open Incidents: <strong>{incidentCount}</strong>
       </p>
-      <div style={{
-        marginTop: '12px',
-        padding: '12px',
-        backgroundColor: '#ffffff',
-        borderRadius: '8px',
-        border: '1px solid #e2e8f0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <span style={{ fontWeight: 500, color: '#64748b' }}>Open Incidents Detected</span>
-        <span style={{
-          padding: '4px 12px',
-          backgroundColor: '#3b82f6',
-          color: 'white',
-          fontWeight: 700,
-          borderRadius: '9999px',
-          fontSize: '0.875rem'
-        }}>
-          {incidentCount}
-        </span>
+    </div>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// 2. Settings Panel Component
+// ----------------------------------------------------------------------------
+const DemoSettingsPanel = ({ config }: any) => {
+  const isDemoModeEnabled = config?.ENABLE_DEMO_MODE === 'true';
+  return (
+    <div style={CardStyle}>
+      <h3 style={HeaderStyle}>⚙️ Operator Settings Panel</h3>
+      <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+        Demo Mode is: {isDemoModeEnabled ? 'ACTIVE' : 'INACTIVE'} (from config)
+      </p>
+    </div>
+  );
+};
+
+// ----------------------------------------------------------------------------
+// 3. Context Widgets
+// ----------------------------------------------------------------------------
+const DemoIncidentWidget = ({ incident }: any) => (
+  <div style={{ ...CardStyle, backgroundColor: 'rgba(16, 185, 129, 0.05)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
+    <h3 style={HeaderStyle}>📄 Incident Context Widget</h3>
+    <p style={{ color: '#475569', fontSize: '0.875rem', margin: 0 }}>
+      Viewing Incident ID: <code>{incident?.id || 'Unknown'}</code><br/>
+      Title: {incident?.title || 'Unknown'}
+    </p>
+  </div>
+);
+
+const DemoAssetWidget = ({ asset }: any) => (
+  <div style={{ ...CardStyle, backgroundColor: 'rgba(245, 158, 11, 0.05)', borderColor: 'rgba(245, 158, 11, 0.2)' }}>
+    <h3 style={HeaderStyle}>💻 Asset Context Widget</h3>
+    <p style={{ color: '#475569', fontSize: '0.875rem', margin: 0 }}>
+      Contextual Asset: {asset?.name || 'Unknown'} (IP: {asset?.ipAddress || 'N/A'})
+    </p>
+  </div>
+);
+
+const DemoVulnerabilityWidget = ({ vulnerability }: any) => (
+  <div style={{ ...CardStyle, backgroundColor: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+    <h3 style={HeaderStyle}>🛡️ Vulnerability Context Widget</h3>
+    <p style={{ color: '#475569', fontSize: '0.875rem', margin: 0 }}>
+      Inspecting Vuln: {vulnerability?.title || 'Unknown'} ({vulnerability?.cveId || 'No CVE'})
+    </p>
+  </div>
+);
+
+const DemoUserWidget = ({ user }: any) => (
+  <div style={{ ...CardStyle, backgroundColor: 'rgba(139, 92, 246, 0.05)', borderColor: 'rgba(139, 92, 246, 0.2)' }}>
+    <h3 style={HeaderStyle}>👤 User Context Widget</h3>
+    <p style={{ color: '#475569', fontSize: '0.875rem', margin: 0 }}>
+      Profile Target: {user?.name || 'Unknown'} ({user?.email})
+    </p>
+  </div>
+);
+
+// ----------------------------------------------------------------------------
+// 4. Full Page Component
+// ----------------------------------------------------------------------------
+const DemoFullPage = ({ routeSlug }: any) => {
+  return (
+    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+      <div style={CardStyle}>
+        <h1 style={{ ...HeaderStyle, fontSize: '1.5rem', marginBottom: '1rem' }}>🚀 Full Page Plugin Route</h1>
+        <p style={{ color: '#475569', lineHeight: 1.6 }}>
+          Welcome to a completely isolated full-page React route injected by the plugin system!
+          <br/><br/>
+          This page bypasses standard Next.js file-system routing and is directly served via our dynamic catch-all system (<code>/plugins/[pluginId]/[[...slug]]</code>).
+        </p>
+        <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px' }}>
+          <strong>Extracted Sub-Route Slugs:</strong>
+          <pre style={{ margin: 0, marginTop: '0.5rem' }}>{JSON.stringify(routeSlug || [], null, 2)}</pre>
+        </div>
       </div>
     </div>
   );
 };
 
 // ----------------------------------------------------------------------------
-// 2. Settings Panel Component (Server Component)
+// 5. System Config Tab Component
 // ----------------------------------------------------------------------------
-const DemoSettingsPanel = ({ config }: any) => {
-  const isDemoModeEnabled = config?.ENABLE_DEMO_MODE === 'true';
-
+const DemoSystemConfigTab = ({ config }: any) => {
   return (
-    <div style={{ padding: '1.5rem', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' }}>
-      <h2 style={{ marginTop: 0, marginBottom: '1rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        ⚙️ UI Injection Settings Panel
-      </h2>
-      <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>
-        This panel supports native React UI injections. 
+    <div style={{ ...CardStyle, border: 'none', padding: '0', boxShadow: 'none' }}>
+      <h3 style={{ ...HeaderStyle, fontSize: '1.25rem', marginBottom: '1rem' }}>⚙️ Custom System Configuration</h3>
+      <p style={{ color: '#475569', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+        This Native Tab allows plugin administrators to manage global configuration independently of the main System Settings forms.
       </p>
-      
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
-        <button 
-          style={{
-            padding: '10px 20px',
-            backgroundColor: isDemoModeEnabled ? '#10b981' : '#f1f5f9',
-            color: isDemoModeEnabled ? '#ffffff' : '#475569',
-            border: `1px solid ${isDemoModeEnabled ? '#059669' : '#cbd5e1'}`,
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'not-allowed',
-            opacity: 0.8
-          }}
-          disabled
-        >
-          {isDemoModeEnabled ? 'Demo Config Active' : 'Demo Config Inactive'}
-        </button>
-        <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
-          This button's appearance is driven directly by your Plugin Config JSON instead of useState.
-        </span>
+      <div style={{ padding: '1rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+        <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 600 }}>Active Configuration Dump:</h4>
+        <pre style={{ fontSize: '12px', background: '#f1f5f9', padding: '12px', borderRadius: '4px', overflowX: 'auto', marginTop: '8px' }}>
+          {JSON.stringify(config || { "message": "No config available" }, null, 2)}
+        </pre>
       </div>
     </div>
   );
@@ -111,17 +146,36 @@ const UiInjectionDemo: OpenTicketPlugin = {
     id: 'ui-injection-demo',
     name: 'UI Frontend Injection Demo',
     version: '1.0.0',
-    description: 'Demonstrates the Zero-Downtime Hot Reload capabilities of OpenTicket by natively injecting React widgets and settings panels into the dashboard.',
+    description: 'Demonstrates the Zero-Downtime Hot Reload capabilities of OpenTicket by natively injecting React widgets, full pages, and settings tabs.',
     requestedPermissions: ['VIEW_INCIDENTS_ALL']
   },
   
-  // Registering our custom frontend components!
   ui: {
     dashboardWidgets: [DemoDashboardWidget],
-    settingsPanels: [DemoSettingsPanel]
+    settingsPanels: [DemoSettingsPanel],
+    incidentMainWidgets: [DemoIncidentWidget],
+    incidentSidebarWidgets: [DemoIncidentWidget],
+    assetMainWidgets: [DemoAssetWidget],
+    assetSidebarWidgets: [DemoAssetWidget],
+    vulnerabilityMainWidgets: [DemoVulnerabilityWidget],
+    vulnerabilitySidebarWidgets: [DemoVulnerabilityWidget],
+    userWidgets: [DemoUserWidget],
+    pages: [
+      {
+        routeUrl: 'demo-page',
+        title: 'UI Integration Demo',
+        component: DemoFullPage
+      }
+    ],
+    systemConfigTabs: [
+      {
+        tabId: 'ui-demo-config',
+        label: 'UI Demonstration Settings',
+        component: DemoSystemConfigTab
+      }
+    ]
   },
 
-  // No specific background hooks needed for this cosmetic plugin demo
   hooks: {}
 };
 

@@ -22,10 +22,7 @@
         "requestedPermissions": [
           "VIEW_INCIDENTS_ALL"
         ],
-        "dependsOn": [],
-        "options": {
-          "renderCondition": "always"
-        },
+
         "configSchema": [
           {
             "key": "ENABLE_DEMO_MODE",

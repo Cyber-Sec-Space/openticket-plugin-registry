@@ -147,7 +147,15 @@ const UiInjectionDemo: OpenTicketPlugin = {
     name: 'UI Frontend Injection Demo',
     version: '1.0.0',
     description: 'Demonstrates the Zero-Downtime Hot Reload capabilities of OpenTicket by natively injecting React widgets, full pages, and settings tabs.',
-    requestedPermissions: ['VIEW_INCIDENTS_ALL']
+    requestedPermissions: ['VIEW_INCIDENTS_ALL'],
+    options: [
+      {
+        key: "ENABLE_DEMO_MODE",
+        type: "boolean",
+        label: "Enable Settings Panel Interactive Demo Mode",
+        required: false
+      }
+    ]
   },
   
   ui: {

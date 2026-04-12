@@ -18,7 +18,7 @@
         "supportedPluginApiVersion": [
           ">=1.1.0"
         ],
-        "integritySha256": "db93640c5954a014d06bc2b5642bba8163ea4bd8a324c2d830947b3529cbf85e",
+        "integritySha256": "f6f1b91bbfba57777ce2d7dc90881fb6b36522a68291a4f533d22d7a79aecf92",
         "requestedPermissions": [
           "VIEW_INCIDENTS_ALL"
         ],
@@ -29,6 +29,40 @@
             "type": "boolean",
             "label": "Enable Settings Panel Interactive Demo Mode",
             "required": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "webhook-to-ticket",
+    "name": "Generic Webhook Ingestion",
+    "description": "Receives inbound alerts via Generic Webhook JSON payload and safely converts them into new Incident tickets.",
+    "author": "OpenTicket Team",
+    "developer": {
+      "name": "OpenTicket Team",
+      "email": "dev@cyber-sec.space",
+      "website": "https://openticket.cyber-sec.space"
+    },
+    "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
+    "icon": "webhook",
+    "latestVersion": "1.0.0",
+    "versions": {
+      "1.0.0": {
+        "sourceType": "registry",
+        "supportedPluginApiVersion": [
+          ">=1.1.0"
+        ],
+        "integritySha256": "daf8c24eb6e4b0316953ab0eb25cea73eaf04064005786d4b5e21ae4a6671d9e",
+        "requestedPermissions": [
+          "CREATE_INCIDENTS"
+        ],
+        "configSchema": [
+          {
+            "key": "WEBHOOK_SECRET",
+            "type": "secret",
+            "label": "Webhook Authorization Secret",
+            "required": true
           }
         ]
       }

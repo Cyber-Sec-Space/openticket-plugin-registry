@@ -7,6 +7,7 @@ const WebhookToTicketPlugin: OpenTicketPlugin = {
     name: "Generic Webhook Ingestion",
     version: "1.0.0",
     description: "Receives inbound alerts via Generic Webhook JSON payload and safely converts them into new Incident tickets.",
+    requestedPermissions: ["CREATE_INCIDENTS"],
     options: [
       {
         key: "WEBHOOK_SECRET",
@@ -66,6 +67,9 @@ const WebhookToTicketPlugin: OpenTicketPlugin = {
     ]
   },
   hooks: {
+    onInstall: async (config, context) => {
+      await context.api.initEntity("Webhook Ingestion Bot", ["CREATE_INCIDENTS"]);
+    },
     onWebhookReceived: async (req, config, context) => {
       try {
         // 1. Basic Webhook Validation & Size Limits

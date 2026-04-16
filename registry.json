@@ -11,8 +11,26 @@
     },
     "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
     "icon": "layout",
-    "latestVersion": "1.0.0",
+    "latestVersion": "1.1.0",
     "versions": {
+      "1.1.0": {
+        "sourceType": "registry",
+        "supportedPluginApiVersion": [
+          ">=1.1.0"
+        ],
+        "integritySha256": "ec97ebf489571eddedbaa793ff260fdc95d3b9ceb41d53d733c129af319aef1f",
+        "requestedPermissions": [
+          "VIEW_INCIDENTS_ALL"
+        ],
+        "configSchema": [
+          {
+            "key": "ENABLE_DEMO_MODE",
+            "type": "boolean",
+            "label": "Enable Settings Panel Interactive Demo Mode",
+            "required": false
+          }
+        ]
+      },
       "1.0.0": {
         "sourceType": "registry",
         "supportedPluginApiVersion": [
@@ -46,14 +64,32 @@
     },
     "repositoryUrl": "https://github.com/Cyber-Sec-Space/openticket-plugin-registry",
     "icon": "webhook",
-    "latestVersion": "1.0.0",
+    "latestVersion": "1.1.0",
     "versions": {
+      "1.1.0": {
+        "sourceType": "registry",
+        "supportedPluginApiVersion": [
+          ">=1.2.0"
+        ],
+        "integritySha256": "75728c4401854642b766cefac6d528b1888aab4a65928dddeb988a422379acfb",
+        "requestedPermissions": [
+          "CREATE_INCIDENTS"
+        ],
+        "configSchema": [
+          {
+            "key": "WEBHOOK_SECRET",
+            "type": "secret",
+            "label": "Webhook Authorization Secret",
+            "required": true
+          }
+        ]
+      },
       "1.0.0": {
         "sourceType": "registry",
         "supportedPluginApiVersion": [
-          ">=1.1.0"
+          ">=1.2.0"
         ],
-        "integritySha256": "947ce5ddc1e13356040585e5d98029a0ba0f480face499ca9bdec13fa1928863",
+        "integritySha256": "a0933379afe91c1860521b6ece875cab51ba2659f2b385b04f5a0bb128b3200c",
         "requestedPermissions": [
           "CREATE_INCIDENTS"
         ],

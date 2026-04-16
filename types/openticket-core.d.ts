@@ -327,7 +327,7 @@ export type OpenTicketPluginUI = {
   }[];
 };
 
-export const PLUGIN_API_VERSION = "1.1.0";
+export const PLUGIN_API_VERSION = "1.2.0";
 
 export type OpenTicketPluginHooks = {
   onInstall?: (config: Record<string, any>, context: PluginSdkContext) => Promise<void>;
@@ -362,7 +362,15 @@ export type OpenTicketPlugin = {
     description: string;
     requestedPermissions?: Permission[];
     supportedPluginApiVersion?: string[];
-    options?: Record<string, any>;
+    options?: Array<{
+      key: string;
+      type: 'string' | 'number' | 'boolean' | 'enum' | 'secret' | 'info';
+      label?: string;
+      required?: boolean;
+      options?: string[];
+      defaultValue?: any;
+      content?: string;
+    }>;
     dependsOn?: string[];
     signature?: string;
   };
@@ -380,11 +388,12 @@ export type PluginRegistryVersion = {
   options?: Record<string, any>;
   configSchema?: Array<{
     key: string;
-    type: 'string' | 'number' | 'boolean' | 'enum' | 'secret';
+    type: 'string' | 'number' | 'boolean' | 'enum' | 'secret' | 'info';
     label: string;
-    required: boolean;
+    required?: boolean;
     options?: string[];
     defaultValue?: any;
+    content?: string;
   }>;
 };
 

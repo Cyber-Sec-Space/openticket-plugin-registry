@@ -5,8 +5,9 @@ const WebhookToTicketPlugin: OpenTicketPlugin = {
   manifest: {
     id: "webhook-to-ticket",
     name: "Generic Webhook Ingestion",
-    version: "1.0.0",
+    version: "1.1.0",
     description: "Receives inbound alerts via Generic Webhook JSON payload and safely converts them into new Incident tickets.",
+    supportedPluginApiVersion: ['1.0.0', '1.1.0', '1.2.0', '1.3.0'],
     requestedPermissions: ["CREATE_INCIDENTS"],
     options: [
       {
